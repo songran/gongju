@@ -1,5 +1,5 @@
 <?php
-namespace gongju\db;
+namespace Gongju\Db;
 date_default_timezone_set('Asia/Shanghai');
 
 class Mysqli {
