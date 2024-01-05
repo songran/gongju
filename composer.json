@@ -1,6 +1,6 @@
 {
     "name": "songran/gongju",
-    "description": "php gongju",
+    "description": "php 工具箱",
     "license": "MIT",
     "autoload": {
         "psr-4": {
