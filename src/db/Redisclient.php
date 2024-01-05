@@ -4,19 +4,12 @@ namespace Gongju\Db;
 class Redisclient {
 
     private $_HOST;
-
     private $_PORT;
-
     private $_AUTH;
-
     private $_TIMEOUT = 0;
-
     private $_DBNAME;
-
     private $_CTYPE = 1;
-
     private $_TRANSCATION;
-
     public $_REDIS;
     /**
      * $config=[
@@ -48,7 +41,12 @@ class Redisclient {
         }
         return $this->_REDIS;
     }
-
+    /**
+     * 链接
+     * @Author   SongRan
+     * @DateTime 2024-01-05
+     * @return   [type]     [description]
+     */
     public function connect() {
 
         switch ($this->_CTYPE) {
