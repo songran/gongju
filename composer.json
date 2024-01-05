@@ -1,6 +1,6 @@
 {
     "name": "songran/gongju",
-    "description": "php 工具箱",
+    "description": "php 工具箱:包含数据库连接，消息队列，生成二维码，接口安全验证等等",
     "license": "MIT",
     "autoload": {
         "psr-4": {
