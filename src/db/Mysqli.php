@@ -4,36 +4,44 @@ date_default_timezone_set('Asia/Shanghai');
 
 class Mysqli {
 
-    /**
-     * MySQLi链接
-     */
-    private $link_id = null;
-    /**
-     * 数据库名
-     */
-    private $dbname;
-    /**
-     * 调试模式
-     */
-    private $debug = 1;
+    private $link_id = null;//MySQLi链接
+    private $dbname; //数据库名
+    private $debug ; //调试模式
+    private $isLog ; //是否写入日志
+    private $logfile;//日志目录
+
     /**
      * 构造函数
+     * 
      * 调用connect方法，返回$link_id
      */
-    function __construct($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect = 0) {
+    public function __construct($conf) {
+        $dbhost   = $conf['dbhost'];
+        $dbuser   = $conf['dbuser'];
+        $dbpw     = $conf['dbpw'];
+        $dbname   = $conf['dbname']?$conf['dbname']:'';
+        $charset  = $conf['charset']?$conf['charset']:'UTF8';
+        $pconnect = isset($conf['pconnect']) && $conf['pconnect']==1?1:0;
+        $this->debug    = isset($conf['debug'])?$conf['debug']:1;
+
+
+        $this->logfile = isset($conf['logfile']) && $conf['logfile']!=''?$conf['logfile']:'';
+        $this->isLog   = isset($conf['logfile']) && $conf['logfile']!=''?1:0;
+
         $this->link_id = $this->connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect);
+        $this->dbname = $dbname;
     }
     /**
      * 打开一个MySql链接
-     * $dbhost  数据库地址
-     * $dbuse  数据库账号
-     * $dbpw  数据库密码
-     * $dbname  数据库名
+     * $dbhost   数据库地址
+     * $dbuse    数据库账号
+     * $dbpw     数据库密码
+     * $dbname   数据库名
      * $pconnect 1:持久链接;0:普通链接
      * $charset
      * return $link_id
      */
-    function connect($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'UTF8', $pconnect = 0) {
+    public function connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect) {
         $func = $pconnect == 1 ? 'mysqli_pconnect' : 'mysqli_connect';
         if (!$this->link_id = @$func($dbhost, $dbuser, $dbpw)) {
             $this->message('Can not connect to MySQL server');
@@ -45,14 +53,13 @@ class Mysqli {
             $this->message('Cannot use database ' . $dbname);
             return false;
         }
-        $this->dbname = $dbname;
         return $this->link_id;
     }
     /**
      * 选择数据库
      * return bool
      */
-    function selectDb($dbname) {
+    public function selectDb($dbname) {
         if (!@mysqli_select_db($this->link_id, $dbname)) {
             return false;
         }
@@ -63,7 +70,7 @@ class Mysqli {
     /**
      * 执行sql
      */
-    function query($sql) {
+    public function query($sql) {
         $query = mysqli_query($this->link_id, $sql); //or $this->message('MySQL Query Error: ', $sql);
         return $query;
     }
@@ -74,7 +81,7 @@ class Mysqli {
      * @param  $keyfield
      * @return Result
      */
-    function select($sql) {
+    public function select($sql) {
         $array  = [];
         $result = $this->query($sql);
         while ($r = $this->fetchArray($result)) {
@@ -87,7 +94,7 @@ class Mysqli {
     /**
      * 获取第一条结果
      */
-    function getfirst($sql) {
+    public function getfirst($sql) {
         return $this->fetchArray($this->query($sql));
     }
 
@@ -97,7 +104,7 @@ class Mysqli {
      * $array  需要插入的数据 array('filed=>$value)
      * return bool
      */
-    function insert($tablename, $array) {
+    public function insert($tablename, $array) {
         return $this->query("INSERT INTO `$tablename`(`" . implode('`,`', array_keys($array)) . "`) VALUES('" . implode("','", $array) . "')");
     }
     /**
@@ -107,7 +114,7 @@ class Mysqli {
      * $where  条件
      * @return bool
      */
-    function update($tablename, $array, $where = '') {
+    public function update($tablename, $array, $where = '') {
         if ($where) {
             $sql = '';
             foreach ($array as $k => $v) {
@@ -125,7 +132,7 @@ class Mysqli {
      * $table 表名
      * return Primary  filed
      */
-    function getPrimary($table) {
+    public function getPrimary($table) {
         $result = $this->query("SHOW COLUMNS FROM $table");
         while ($r = $this->fetchArray($result)) {
             if ($r['Key'] == 'PRI') {
@@ -144,7 +151,7 @@ class Mysqli {
      * @param String $type    mysql_query  or   mysql_unbuffered_query
      * @return   Result
      */
-    function fetch($sql) {
+    public function fetch($sql) {
         $query = $this->query($sql);
         $rs    = $this->fetchArray($query);
         $this->freeResult($query);
@@ -154,31 +161,31 @@ class Mysqli {
      *  遍历结果集
      *  $result_type MYSQL_ASSOC 关联索引;MYSQL_NUM 数字索引;MYSQL_BOTH 两者都有
      */
-    function fetchArray($query, $result_type = MYSQLI_ASSOC) {
+    public function fetchArray($query, $result_type = MYSQLI_ASSOC) {
         return mysqli_fetch_array($query, $result_type);
     }
     /**
      * 从结果集中取得一行作为数组
      */
-    function fetchRow($query) {
+    public function fetchRow($query) {
         return mysqli_fetch_row($query);
     }
     /**
      *  INSERT，UPDATE 或 DELETE 查询所影响的记录行数
      */
-    function affectedRows() {
+    public function affectedRows() {
         return mysqli_affected_rows($this->link_id);
     }
     /**
      * 获取结果集行数
      */
-    function numRows($result) {
+    public function numRows($result) {
         return mysqli_num_rows($result);
     }
     /**
      * 返回结果集中字段的数目
      */
-    function numFields($result) {
+    public function numFields($result) {
         return mysql_num_fields($result);
     }
 
@@ -186,38 +193,38 @@ class Mysqli {
      * 释放所有与结果标识符 result 所关联的内存。
      * return bool
      */
-    function freeResult(&$result) {
+    public function freeResult(&$result) {
         return mysqli_free_result($result);
     }
     /**
      * 获取上步insert产生的自增id
      */
-    function insertId() {
+    public function insertId() {
         return mysqli_insert_id($this->link_id);
     }
     /**
      * 获取服务器版本
      */
-    function version() {
+    public function version() {
         return mysqli_get_server_info($this->link_id);
     }
     /**
      * 关闭MySQL链接
      * @return bool
      */
-    function close() {
+    public function close() {
         return mysqli_close($this->link_id);
     }
     /**
      * 获取mysql错误信息
      */
-    function error() {
+    public function error() {
         return @mysqli_error($this->link_id);
     }
     /**
      * 获取mysql错误号码
      */
-    function errno() {
+    public function errno() {
         return intval(@mysqli_errno($this->link_id));
     }
     /**
@@ -225,13 +232,28 @@ class Mysqli {
      * $message  错误信息
      * $sql  错误sql
      */
-    function message($message = '', $sql = '') {
-        $this->errormsg = "<b>MySQL Query : </b>$sql <br /><b> MySQL Error : </b>" . $this->error() . " <br /> <b>MySQL Errno : </b>" . $this->errno() . " <br /><b> Message : </b> $message";
+    public function message($message = '', $sql = '') {
+        $errormsg = "<b>MySQL Query : </b>$sql <br /><b> MySQL Error : </b>" . $this->error() . " <br /> <b>MySQL Errno : </b>" . $this->errno() . " <br /><b> Message : </b> $message";
+        $msg = (defined('IN_ADMIN') || DEBUG) ? $errormsg : "Bad Request. $LANG[illegal_request_return]";
+        $this->writeLog($msg);
         if ($this->debug) {
-            $msg = (defined('IN_ADMIN') || DEBUG) ? $this->errormsg : "Bad Request. $LANG[illegal_request_return]";
             echo '<div style="font-size:12px;text-align:left; border:1px solid #9cc9e0; padding:1px 4px;color:#000000;font-family:Arial, Helvetica,sans-serif;"><span>' . $msg . '</span></div>';
             exit;
         }
+    }
+    /**
+     * 写入日志
+     * @Author   SongRan
+     * @DateTime 2024-01-08
+     * @param    [type]     $msg [description]
+     * @return   [type]          [description]
+     */
+    public function writeLog($msg){
+        if($this->isLog){
+            $info = date('Y/m/d H:i:s', time()) . ' ' . $msg . "\n";
+            file_put_contents(__DIR__ . "{$this->logfile}", $info, FILE_APPEND);
+        }
+        return true; 
     }
 
 }
