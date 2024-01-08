@@ -10,7 +10,7 @@ class Redisclient {
     private $_DBNAME;
     private $_CTYPE = 1;
     private $_TRANSCATION;
-    public $_REDIS;
+    public  $_REDIS;
     /**
      * $config=[
     'host'              => '192.168.1.110',
