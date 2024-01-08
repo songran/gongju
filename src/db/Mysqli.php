@@ -49,7 +49,7 @@ class Mysqli {
             return false;
         }
         mysqli_query($this->link_id, "SET NAMES $charset");
-        
+
         if ($dbname && !@mysqli_select_db($this->link_id, $dbname)) {
             $this->message('Cannot use database ' . $dbname);
             return false;
