@@ -31,15 +31,10 @@ class CheckEnvirement {
             self::fail('默认时区设置', '请设置默认时区，如：date_default_timezone_set("Asia/Shanghai")');
         }
         echo '<h2>依赖扩展检测，如失败请安装相应扩展</h2>';
-        $dependencies = [
-            'json_encode'           => null,
-            'curl_init'             => null,
-            'hash_hmac'             => null,
-            'simplexml_load_string' => '如果是php7.x + ubuntu环境，请确认php7.x-libxml是否安装，x为子版本号',
-        ];
+        $dependencies = self::getConf();
         foreach ($dependencies as $funcName => $description) {
             if (!function_exists($funcName)) {
-                fail($funcName, $description || '');
+                self::fail($funcName, $description || '');
             } else {
                 self::success($funcName);
             }
@@ -51,6 +46,25 @@ class CheckEnvirement {
     }
     static function fail($title, $description) {
         print_r("<li class=\"fail\"><label>{$title}</label>[失败] {$description}</li>");
+    }
+    /**
+     * 获得 要检查的函数
+     * @Author   SongRan
+     * @DateTime 2024-01-08
+     * @param    array      $options [description]
+     * @return   [type]              [description]
+     */
+    static function getConf($options=[]){
+        $arr = [
+            'json_encode'           => null,
+            'curl_init'             => null,
+            'hash_hmac'             => null,
+            'simplexml_load_string' => '如果是php7.x + ubuntu环境，请确认php7.x-libxml是否安装，x为子版本号',
+        ];
+        if(!empty($options)){
+            $arr=$options;
+        }
+        return $arr;
     }
 
 }
