@@ -43,12 +43,13 @@ class Mysqli {
      */
     public function connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect) {
         $func = $pconnect == 1 ? 'mysqli_pconnect' : 'mysqli_connect';
-        if (!$this->link_id = @$func($dbhost, $dbuser, $dbpw)) {
+        $this->link_id = @$func($dbhost, $dbuser, $dbpw);
+        if (!$this->link_id ) {
             $this->message('Can not connect to MySQL server');
             return false;
         }
         mysqli_query($this->link_id, "SET NAMES $charset");
-
+        
         if ($dbname && !@mysqli_select_db($this->link_id, $dbname)) {
             $this->message('Cannot use database ' . $dbname);
             return false;
