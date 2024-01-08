@@ -4,7 +4,10 @@ namespace Gongju\Aliyun;
  * 此文件用于检测DEMO运行环境，无需修改，请在浏览器中运行检测
  */
 class CheckEnvirement {
-
+    public static $hanshuArr;//要检查的函数 数组
+    public function __construct() {
+        self::$hanshuArr = self::getHanshuArr();  
+    }
     /**
      * 监测环境依赖
      * @Author   SongRan
@@ -31,7 +34,7 @@ class CheckEnvirement {
             self::fail('默认时区设置', '请设置默认时区，如：date_default_timezone_set("Asia/Shanghai")');
         }
         echo '<h2>依赖扩展检测，如失败请安装相应扩展</h2>';
-        $dependencies = self::getConf();
+        $dependencies = self::$hanshuArr;
         foreach ($dependencies as $funcName => $description) {
             if (!function_exists($funcName)) {
                 self::fail($funcName, $description || '');
@@ -54,7 +57,7 @@ class CheckEnvirement {
      * @param    array      $options [description]
      * @return   [type]              [description]
      */
-    static function getConf($options=[]){
+    static function getHanshuArr($options=[]){
         $arr = [
             'json_encode'           => null,
             'curl_init'             => null,
@@ -64,6 +67,7 @@ class CheckEnvirement {
         if(!empty($options)){
             $arr=$options;
         }
+        self::$hanshuArr = $arr;
         return $arr;
     }
 
