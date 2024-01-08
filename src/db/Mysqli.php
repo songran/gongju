@@ -71,7 +71,12 @@ class Mysqli {
      * 执行sql
      */
     public function query($sql) {
-        $query = mysqli_query($this->link_id, $sql); //or $this->message('MySQL Query Error: ', $sql);
+        $query = mysqli_query($this->link_id, $sql); 
+        if($query){
+            return $query;
+        }else{
+            $this->message('MySQL Query Error: ', $sql);
+        }
         return $query;
     }
     /**
