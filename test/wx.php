@@ -2,16 +2,16 @@
     /**
      * 微信生成 二维码
      */
-    require_once __DIR__ . '/vendor/autoload.php';
-    use Gongju\Wx\Qrcode;
+include "./vendor/autoload.php";
+use Gongju\Wx\Qrcode;
 
-    $config = [
-        'app_id' => 'xx', // 评测小程序 微信appid
-        'secret' => 'xx', //评测小程序
-    ];
-    $mod          = new Qrcode($config);
-    $base64_image = $mod->getBase64Img('pages/index/index?qrcode=helloworld');
-    //echo $base64_image;exit;
+$config = [
+    'app_id' => 'xx', // 评测小程序 微信appid
+    'secret' => 'xx', //评测小程序
+];
+$mod          = new Qrcode($config);
+$base64_image = $mod->getBase64Img('pages/index/index?qrcode=helloworld');
+//echo $base64_image;exit;
     //exit;
 ?>
 

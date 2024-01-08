@@ -1,7 +1,7 @@
 <?php
  //放到最外层
-require_once __DIR__ . '/../vendor/autoload.php';  
-use Safe\Verification;  
+include "./vendor/autoload.php";
+use Gongju\Safe\Verification;  
 
 $mod    = new Verification('hooLi2017', 60); //秘钥和过期时间
 
