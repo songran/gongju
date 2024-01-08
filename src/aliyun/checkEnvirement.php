@@ -37,7 +37,7 @@ class CheckEnvirement {
         $dependencies = self::$hanshuArr;
         foreach ($dependencies as $funcName => $description) {
             if (!function_exists($funcName)) {
-                self::fail($funcName, $description|| '');
+                self::fail($funcName, $description);
             } else {
                 self::success($funcName);
             }
