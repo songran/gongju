@@ -48,12 +48,12 @@ class Mysqli {
         $this->link_id = @$func($dbhost, $dbuser, $dbpw);
          if (!$this->link_id ) {
             $this->message('数据库链接失败');
-            return false;
+        }
+        if($this->link_id){
+             mysqli_query($this->link_id, "SET NAMES $charset");
         }  
-        mysqli_query($this->link_id, "SET NAMES $charset");
         if ($dbname && !@mysqli_select_db($this->link_id, $dbname)) {
             $this->message('数据库错误');
-            return false;
         }
      }
     /**
@@ -90,10 +90,14 @@ class Mysqli {
     public function select($sql) {
         $array  = [];
         $result = $this->query($sql);
-        while ($r = $this->fetchArray($result)) {
-            $array[] = $r;
+        if($result){
+             while ($r = $this->fetchArray($result)) {
+                $array[] = $r;
+            }
+            $this->freeResult($result);
         }
-        $this->freeResult($result);
+       
+        
         return $array;
     }
 
@@ -168,7 +172,7 @@ class Mysqli {
      *  $result_type MYSQL_ASSOC 关联索引;MYSQL_NUM 数字索引;MYSQL_BOTH 两者都有
      */
     public function fetchArray($query, $result_type = MYSQLI_ASSOC) {
-        return mysqli_fetch_array($query, $result_type);
+        return @mysqli_fetch_array($query, $result_type);
     }
     /**
      * 从结果集中取得一行作为数组
@@ -200,7 +204,9 @@ class Mysqli {
      * return bool
      */
     public function freeResult(&$result) {
-        return mysqli_free_result($result);
+        if($result){
+            return @mysqli_free_result($result);
+        }
     }
     /**
      * 获取上步insert产生的自增id
@@ -260,8 +266,8 @@ class Mysqli {
         $this->writeLog($msg1);
         if ($this->debug) {
             echo '<div style="font-size:12px;text-align:left; border:1px solid #9cc9e0; padding:1px 4px;color:#000000;font-family:Arial, Helvetica,sans-serif;"><span>' . $errorMsg . '</span></div>';
-            exit;
         }
+        //exit;
     }
     /**
      * 写入日志

@@ -20,7 +20,7 @@ $config =[
 ];
 $db = new Mysqli($config);
 
-$sql = "select id,title from s_code1 where 1 ;";
+$sql = "select id,title from s_code2 where 1 ;";
 $res = $db->select($sql);
 
 echo '<pre>';
