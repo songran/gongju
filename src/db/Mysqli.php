@@ -1,6 +1,7 @@
 <?php
 namespace Gongju\Db;
 date_default_timezone_set('Asia/Shanghai');
+mysqli_report(MYSQLI_REPORT_OFF);
  
 class Mysqli {
 
@@ -43,7 +44,7 @@ class Mysqli {
      */
     public function connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect) {
         $func = $pconnect == 1 ? 'mysqli_pconnect' : 'mysqli_connect';
-        
+
         $this->link_id = @$func($dbhost, $dbuser, $dbpw);
          if (!$this->link_id ) {
             $this->message('数据库链接失败');
@@ -51,7 +52,7 @@ class Mysqli {
         }  
         mysqli_query($this->link_id, "SET NAMES $charset");
         if ($dbname && !@mysqli_select_db($this->link_id, $dbname)) {
-            $this->message('数据库选择错误' . $dbname);
+            $this->message('数据库错误');
             return false;
         }
      }
@@ -75,7 +76,7 @@ class Mysqli {
         if($query){
             return $query;
         }else{
-            $this->message('执行错误: ', $sql);
+            $this->message('执行错误', $sql);
         }
         return $query;
     }
@@ -227,13 +228,18 @@ class Mysqli {
      * 获取mysql错误信息
      */
     public function error() {
-        return @mysqli_error($this->link_id);
+        if($this->link_id){
+            return @mysqli_error($this->link_id);   
+        } 
     }
     /**
      * 获取mysql错误号码
      */
     public function errno() {
-        return intval(@mysqli_errno($this->link_id));
+        if($this->link_id){
+            return intval(@mysqli_errno($this->link_id));
+        }
+        
     }
     //析构函数
     public function __destruct()
@@ -246,14 +252,14 @@ class Mysqli {
      * $message  错误信息
      * $sql  错误sql
      */
-    public function message($message = '', $sql = '') {
-        $errormsg = "<b>MySQL Query : </b>$sql <br /><b> MySQL Error : </b>" . $this->error() . " <br /> <b>MySQL Errno : </b>" . $this->errno() . " <br /><b> Message : </b> $message";
-        $msg = (defined('IN_ADMIN') || DEBUG) ? $errormsg : "Bad Request. $LANG[illegal_request_return]";
+    public function message($msg = '', $sql = '') {
+        $errorMsg = "<b> Sql : </b>$sql <br /><b>  Err : </b>" . $this->error() . " <br /> <b> Errno : </b>" . $this->errno() . " <br /><b> Msg : </b> $msg";
+ 
 
-        $msg1 ="MySQL Query : $sql  MySQL Error :" . $this->error() . "MySQL Errno : " . $this->errno() . "Message :$message \n";
+        $msg1 ="sql:".$sql." Err:".$this->error()." Errno:".$this->errno()." Msg:$msg";
         $this->writeLog($msg1);
         if ($this->debug) {
-            echo '<div style="font-size:12px;text-align:left; border:1px solid #9cc9e0; padding:1px 4px;color:#000000;font-family:Arial, Helvetica,sans-serif;"><span>' . $msg . '</span></div>';
+            echo '<div style="font-size:12px;text-align:left; border:1px solid #9cc9e0; padding:1px 4px;color:#000000;font-family:Arial, Helvetica,sans-serif;"><span>' . $errorMsg . '</span></div>';
             exit;
         }
     }
