@@ -1,7 +1,7 @@
 <?php
 namespace Gongju\Db;
 date_default_timezone_set('Asia/Shanghai');
-
+ 
 class Mysqli {
 
     private $link_id = null;//MySQLi链接
@@ -26,9 +26,9 @@ class Mysqli {
 
 
         $this->logfile = isset($conf['logfile']) && $conf['logfile']!=''?$conf['logfile']:'';
-        $this->isLog   = isset($conf['logfile']) && $conf['logfile']!=''?1:0;
+        $this->isLog   = $this->logfile ?1:0;
 
-        $this->link_id = $this->connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect);
+        $this->connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect);
         $this->dbname = $dbname;
     }
     /**
@@ -43,19 +43,18 @@ class Mysqli {
      */
     public function connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect) {
         $func = $pconnect == 1 ? 'mysqli_pconnect' : 'mysqli_connect';
+        
         $this->link_id = @$func($dbhost, $dbuser, $dbpw);
-        if (!$this->link_id ) {
-            $this->message('Can not connect to MySQL server');
+         if (!$this->link_id ) {
+            $this->message('数据库链接失败');
             return false;
-        }
+        }  
         mysqli_query($this->link_id, "SET NAMES $charset");
-
         if ($dbname && !@mysqli_select_db($this->link_id, $dbname)) {
-            $this->message('Cannot use database ' . $dbname);
+            $this->message('数据库选择错误' . $dbname);
             return false;
         }
-        return $this->link_id;
-    }
+     }
     /**
      * 选择数据库
      * return bool
@@ -76,7 +75,7 @@ class Mysqli {
         if($query){
             return $query;
         }else{
-            $this->message('MySQL Query Error: ', $sql);
+            $this->message('执行错误: ', $sql);
         }
         return $query;
     }
@@ -219,7 +218,10 @@ class Mysqli {
      * @return bool
      */
     public function close() {
-        return mysqli_close($this->link_id);
+        if($this->link_id){
+            return mysqli_close($this->link_id);
+        }
+       
     }
     /**
      * 获取mysql错误信息
@@ -233,6 +235,12 @@ class Mysqli {
     public function errno() {
         return intval(@mysqli_errno($this->link_id));
     }
+    //析构函数
+    public function __destruct()
+    {
+        $this->close();
+    }
+
     /**
      * 错误信息处理
      * $message  错误信息
@@ -241,7 +249,9 @@ class Mysqli {
     public function message($message = '', $sql = '') {
         $errormsg = "<b>MySQL Query : </b>$sql <br /><b> MySQL Error : </b>" . $this->error() . " <br /> <b>MySQL Errno : </b>" . $this->errno() . " <br /><b> Message : </b> $message";
         $msg = (defined('IN_ADMIN') || DEBUG) ? $errormsg : "Bad Request. $LANG[illegal_request_return]";
-        $this->writeLog($msg);
+
+        $msg1 ="MySQL Query : $sql  MySQL Error :" . $this->error() . "MySQL Errno : " . $this->errno() . "Message :$message \n";
+        $this->writeLog($msg1);
         if ($this->debug) {
             echo '<div style="font-size:12px;text-align:left; border:1px solid #9cc9e0; padding:1px 4px;color:#000000;font-family:Arial, Helvetica,sans-serif;"><span>' . $msg . '</span></div>';
             exit;
@@ -257,7 +267,7 @@ class Mysqli {
     public function writeLog($msg){
         if($this->isLog){
             $info = date('Y/m/d H:i:s', time()) . ' ' . $msg . "\n";
-            file_put_contents(__DIR__ . "{$this->logfile}", $info, FILE_APPEND);
+            file_put_contents($this->logfile, $info, FILE_APPEND);
         }
         return true; 
     }
