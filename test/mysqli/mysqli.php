@@ -15,8 +15,8 @@ $config =[
 	'dbname'	=>'app_songran', 
 	'charset'	=>'utf8', 
 	'pconnect'  => 0,
-	'logfile'   =>__DIR__ . '/db.log',
-	'debug'		=>1,
+//	'logfile'   =>__DIR__ . '/db.log',
+//	'debug'		=>0,
 ];
 $db = new Mysqli($config);
 
