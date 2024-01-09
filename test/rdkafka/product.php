@@ -1,5 +1,7 @@
 <?php
-include "./vendor/autoload.php";
+//include "./vendor/autoload.php";
+require __DIR__ . '/../..//src/db/Rdkafka.php';
+
 use \Gongju\Db\Rdkafka;
 $config = [
     'group'      => 'mygroup',

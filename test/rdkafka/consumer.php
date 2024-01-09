@@ -1,6 +1,8 @@
 <?php
-include "./vendor/autoload.php";
-use \Gongju\Db\Rdkafka;
+//include "./vendor/autoload.php";
+require __DIR__ . '/../..//src/db/Rdkafka.php';
+
+use Gongju\Db\Rdkafka;
 $config = [
     'group'      => 'mygroup',
     'brokerList' => "127.0.0.1:9092,", //39.105.50.68:9092
