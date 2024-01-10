@@ -12,7 +12,12 @@ class Mysqli {
     private $logfile;//日志目录
 
     /**
-     * 构造函数
+     * $config =[
+        'dbhost'    =>'192.168.33.10:3306', 
+        'dbuser'    =>'root', 
+        'dbpw'      =>'root12345',
+        'dbname'    =>'app_songran', 
+    ];
      * 
      * 调用connect方法，返回$link_id
      */

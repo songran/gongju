@@ -9,21 +9,17 @@ class Rdkafka {
     public $isLog   ;
 
     /**
-     *
-     * $config=[
-    'group'             => 'mygroup',
-    'brokerList'        => "127.0.0.1:9092,",//39.105.50.68:9092
-    'topic'             => 'hell123',
-    'maxNum'            => 5,
+      $config=[
+        'group'             => 'mygroup',
+        'brokerList'        => "127.0.0.1:9092,",//39.105.50.68:9092
+        'topic'             => 'hell123',
+        'maxNum'            => 5,
     ];
-     * @Author   SongRan
-     * @DateTime 2024-01-05
-     * @param    [type]     $config [description]
-     */
+    */
     public function __construct($config) {
         $this->kafkaConf = $config;
-        $this->logfile = isset($conf['logfile']) && $conf['logfile']!=''?$conf['logfile']:'';
-        $this->isLog   = $this->logfile ?1:0;
+        $this->logfile   = isset($conf['logfile']) && $conf['logfile']!=''?$conf['logfile']:'';
+        $this->isLog     = $this->logfile ?1:0;
         $this->getConsumer();
     }
     /**

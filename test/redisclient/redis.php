@@ -7,8 +7,6 @@ $config = [
     'port'     => '6379',
     'auth'     => '',
     'timeout'  => 60,
-    'pconnect' => 1,
-    'server'   => 0,
 ];
 $redis = new Redisclient($config);
 

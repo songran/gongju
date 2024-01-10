@@ -13,8 +13,8 @@ $config =[
 	'dbuser'	=>'root', 
 	'dbpw'		=>'root12345',
 	'dbname'	=>'app_songran', 
-	'charset'	=>'utf8', 
-	'pconnect'  => 0,
+//	'charset'	=>'utf8', 
+//	'pconnect'  => 0,
 //	'logfile'   =>__DIR__ . '/db.log',
 //	'debug'		=>0,
 ];

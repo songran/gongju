@@ -14,34 +14,30 @@ class Redisclient {
     private $logfile;//日志目录
     /**
      * $config=[
-    'host'              => '192.168.1.110',
-    'port'              => '6379',
-    'auth'              =>  '',
-    'timeout'           =>  60,
-   // 'ctype'             =>1,
+        'host'              => '192.168.1.110',
+        'port'              => '6379',
+        'auth'              =>  '',
+        'timeout'           =>  60,
+        'ctype'             =>  1,//是否长连接
     ];
      * @Author   SongRan
      * @DateTime 2024-01-05
      * @param    [type]     $config [description]
      */
     public function __construct($config) {
-
         $this->_HOST    = $config['host'];
         $this->_PORT    = $config['port'];
         $this->_AUTH    = $config['auth'];
         $this->_TIMEOUT = $config['timeout'];
         $this->_CTYPE   = $config['ctype']?$config['ctype']:1;
-
-        $this->logfile = isset($conf['logfile']) && $conf['logfile']!=''?$conf['logfile']:'';
-        $this->isLog   = $this->logfile ?1:0;
-
+        $this->logfile  = isset($conf['logfile']) && $conf['logfile']!=''?$conf['logfile']:'';
+        $this->isLog    = $this->logfile ?1:0;
         if (!isset($this->_REDIS)) {
             $this->connect();
             if (isset($this->_AUTH) && $this->_AUTH != '') {
                 $this->_REDIS->auth($this->_AUTH);
             }
         }
-        return $this->_REDIS;
     }
     /**
      * 链接
@@ -55,15 +51,12 @@ class Redisclient {
         case 1:
             $this->_REDIS->connect($this->_HOST, $this->_PORT, $this->_TIMEOUT);
             break;
-
         case 2:
             $this->_REDIS->pconnect($this->_HOST, $this->_PORT, $this->_TIMEOUT);
             break;
-
         default:
             break;
         }
-
     }
 
     /**
@@ -108,19 +101,15 @@ class Redisclient {
         try {
             if ($type) {
                 $return = $this->_REDIS->append($key, $value);
-
             } else {
                 if ($old) {
                     $return = $this->_REDIS->getSet($key, $value);
-
                 } else {
                     if ($repeat) {
                         $return = $this->_REDIS->setnx($key, $value);
-
                     } else {
                         if ($time && is_numeric($time)) {
-                            $return =
-                            $this->_REDIS->setex($key, $time, $value);
+                            $return = $this->_REDIS->setex($key, $time, $value);
                         } else {
                             $return = $this->_REDIS->set($key, $value);
                         }
@@ -145,7 +134,6 @@ class Redisclient {
         try {
             if (is_array($key) && !empty($key)) {
                 $return = $this->_REDIS->getMultiple($key);
-
             } else {
                 if (isset($start) && isset($end)) {
                     $return =
@@ -196,33 +184,25 @@ class Redisclient {
     public function deinc($key, $type = 1, $n = 1) {
         $return = null;
         $n      = (int) $n;
-
         switch ($type) {
         case 0:
             if ($n == 1) {
                 $return = $this->_REDIS->decr($key);
-
             } elseif ($n > 1) {
                 $return = $this->_REDIS->decrBy($key, $n);
             }
-
             break;
-
         case 1:
             if ($n == 1) {
                 $return = $this->_REDIS->incr($key);
-
             } elseif ($n > 1) {
                 $return = $this->_REDIS->incrBy($key, $n);
             }
-
             break;
-
         default:
             $return = false;
             break;
         }
-
         return $return;
     }
 
@@ -282,28 +262,21 @@ class Redisclient {
         case 0:
             if ($repeat) {
                 $return = $this->_REDIS->lPushx($list, $value);
-
             } else {
                 $return = $this->_REDIS->lPush($list, $value);
             }
-
             break;
-
         case 1:
             if ($repeat) {
                 $return = $this->_REDIS->rPushx($list, $value);
-
             } else {
                 $return = $this->_REDIS->rPush($list, $value);
             }
-
             break;
-
         default:
             $return = false;
             break;
         }
-
         return $return;
     }
 
@@ -322,28 +295,21 @@ class Redisclient {
         case 0:
             if ($timeout && $list2) {
                 $return = $this->_REDIS->blPop($list1, $list2, $timeout);
-
             } else {
                 $return = $this->_REDIS->lPop($list1);
             }
-
             break;
-
         case 1:
             if ($timeout && $list2) {
                 $return = $this->_REDIS->brPop($list1, $list2, $timeout);
-
             } else {
                 $return = $this->_REDIS->rPop($list1);
             }
-
             break;
-
         default:
             $return = false;
             break;
         }
-
         return $return;
     }
 
@@ -377,14 +343,11 @@ class Redisclient {
      */
     public function listGet($list, $index = 0, $end = null) {
         $return = null;
-
         if ($end) {
             $return = $this->_REDIS->lRange($list, $index, $end);
-
         } else {
             $return = $this->_REDIS->lGet($list, $index);
         }
-
         return $return;
     }
 
@@ -482,21 +445,17 @@ class Redisclient {
      */
     public function listInsert($list, $location = 0, $value1, $value2) {
         $return = null;
-
         switch ($location) {
         case 0:
             $return = $this->_REDIS->lInsert($list, Redis::BEFORE, $value1, $value2);
             break;
-
         case 1:
             $return = $this->_REDIS->lInsert($list, Redis::AFTER, $value1, $value2);
             break;
-
         default:
             $return = false;
             break;
         }
-
         return $return;
     }
 
@@ -523,14 +482,11 @@ class Redisclient {
      */
     public function setAdd($set, $value = null, $stype = 0, $score = null) {
         $return = null;
-
         if ($stype && $score !== null) {
             $return = $this->_REDIS->zAdd($set, $score, $value);
-
         } else {
             $return = $this->_REDIS->sAdd($set, $value);
         }
-
         return $return;
     }
 
@@ -556,19 +512,15 @@ class Redisclient {
      */
     public function setMove($set1, $value = null, $stype = 0, $set2 = null) {
         $return = null;
-
         if ($set2) {
             $return = $this->_REDIS->sMove($set1, $set2, $value);
-
         } else {
             if ($stype) {
                 $return = $this->_REDIS->zRem($set1, $value);
-
             } else {
                 $return = $this->_REDIS->sRem($set1, $value);
             }
         }
-
         return $return;
     }
 
@@ -593,19 +545,15 @@ class Redisclient {
      */
     public function setSize($set, $stype = 0, $start = 0, $end = 0) {
         $return = null;
-
         if ($stype) {
             if ($start && $end) {
                 $return = $this->_REDIS->zCount($set, $start, $end);
-
             } else {
                 $return = $this->_REDIS->zSize($set);
             }
-
         } else {
             $return = $this->_REDIS->sSize($set);
         }
-
         return $return;
     }
 
@@ -616,14 +564,11 @@ class Redisclient {
      */
     public function setPop($set, $isdel = 0) {
         $return = null;
-
         if ($isdel) {
             $return = $this->_REDIS->sPop($set);
-
         } else {
             $return = $this->_REDIS->sRandMember($set);
         }
-
         return $return;
     }
 
@@ -637,21 +582,17 @@ class Redisclient {
      */
     public function setInter($set, $newset = null, $stype = 0, $weight = [1], $function = 'SUM') {
         $return = [];
-
         if (is_array($set) && !empty($set)) {
             if ($newset) {
                 if ($stype) {
                     $return = $this->_REDIS->zInter($newset, $set, $weight, $function);
-
                 } else {
                     $return = $this->_REDIS->sInterStore($newset, $set);
                 }
-
             } else {
                 $return = $this->_REDIS->sInter($set);
             }
         }
-
         return $return;
     }
 
@@ -665,7 +606,6 @@ class Redisclient {
      */
     public function setUnion($set, $newset = null, $stype = 0, $weight = [1], $function = 'SUM') {
         $return = [];
-
         if (is_array($set) && !empty($set)) {
             if ($newset) {
                 if ($stype) {
@@ -674,12 +614,10 @@ class Redisclient {
                 } else {
                     $return = $this->_REDIS->sUnionStore($newset, $set);
                 }
-
             } else {
                 $return = $this->_REDIS->sUnion($set);
             }
         }
-
         return $return;
     }
 
@@ -690,16 +628,13 @@ class Redisclient {
      */
     public function setDiff($set, $newset = null) {
         $return = [];
-
         if (is_array($set) && !empty($set)) {
             if ($newset) {
                 $return = $this->_REDIS->sDiffStore($newset, $set);
-
             } else {
                 $return = $this->_REDIS->sDiff($set);
             }
         }
-
         return $return;
     }
 
@@ -746,14 +681,11 @@ class Redisclient {
      */
     public function setRange($set, $start, $end, $order = 0, $score = false) {
         $return = null;
-
         if ($order) {
             $return = $this->_REDIS->zRevRange($set, $start, $end, $score);
-
         } else {
             $return = $this->_REDIS->zRange($set, $start, $end, $score);
         }
-
         return $return;
     }
 
@@ -781,14 +713,11 @@ class Redisclient {
      */
     public function setScore($set, $value, $inc = null) {
         $return = null;
-
         if ($inc) {
             $return = $this->_REDIS->zIncrBy($set, $inc, $value);
-
         } else {
             $return = $this->_REDIS->zScore($set, $value);
         }
-
         return $return;
     }
 
@@ -801,21 +730,17 @@ class Redisclient {
      */
     public function hashSet($hash, $data) {
         $return = null;
-
         if (is_array($data) && !empty($data)) {
             $return = $this->_REDIS->hMset($hash, $data);
         }
-
         return $return;
     }
 
     public function hashHSet($key, $field, $value) {
         $return = null;
-
         if (!empty($key)) {
             $return = $this->_REDIS->hSet($key, $field, $value);
         }
-
         return $return;
     }
 
@@ -827,35 +752,28 @@ class Redisclient {
      */
     public function hashGet($hash, $key = [], $type = 0) {
         $return = null;
-
         if ($key) {
             if (is_array($key) && !empty($key)) {
                 $return = $this->_REDIS->hMGet($hash, $key);
-
             } else {
                 $return = $this->_REDIS->hGet($hash, $key);
             }
-
         } else {
             switch ($type) {
             case 0:
                 $return = $this->_REDIS->hKeys($hash);
                 break;
-
             case 1:
                 $return = $this->_REDIS->hVals($hash);
                 break;
-
             case 2:
                 $return = $this->_REDIS->hGetAll($hash);
                 break;
-
             default:
                 $return = false;
                 break;
             }
         }
-
         return $return;
     }
 
@@ -933,18 +851,14 @@ class Redisclient {
      */
     public function hwSave($type = 0, $time = 0) {
         $return = null;
-
         if ($type) {
             $return = $this->_REDIS->bgsave();
-
         } else {
             $return = $this->_REDIS->save();
         }
-
         if ($time) {
             $return = $this->_REDIS->lastSave();
         }
-
         return $return;
     }
 
