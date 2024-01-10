@@ -7,18 +7,18 @@ class Redisclient {
     private $_PORT;
     private $_AUTH;
     private $_TIMEOUT = 0;
-    private $_DBNAME;
-    private $_CTYPE = 1;
-    private $_TRANSCATION;
+    private $_CTYPE ; //是否长连接  1正常 2长连接
+    private $_TRANSCATION; //事务
     public  $_REDIS;
+    private $isLog ; //是否写入日志
+    private $logfile;//日志目录
     /**
      * $config=[
     'host'              => '192.168.1.110',
     'port'              => '6379',
     'auth'              =>  '',
     'timeout'           =>  60,
-    'pconnect'          =>  1,
-    'server'            =>  0
+   // 'ctype'             =>1,
     ];
      * @Author   SongRan
      * @DateTime 2024-01-05
@@ -30,11 +30,13 @@ class Redisclient {
         $this->_PORT    = $config['port'];
         $this->_AUTH    = $config['auth'];
         $this->_TIMEOUT = $config['timeout'];
+        $this->_CTYPE   = $config['ctype']?$config['ctype']:1;
+
+        $this->logfile = isset($conf['logfile']) && $conf['logfile']!=''?$conf['logfile']:'';
+        $this->isLog   = $this->logfile ?1:0;
 
         if (!isset($this->_REDIS)) {
-            $this->_REDIS = new \redis();
             $this->connect();
-
             if (isset($this->_AUTH) && $this->_AUTH != '') {
                 $this->_REDIS->auth($this->_AUTH);
             }
@@ -48,7 +50,7 @@ class Redisclient {
      * @return   [type]     [description]
      */
     public function connect() {
-
+        $this->_REDIS = new \redis();
         switch ($this->_CTYPE) {
         case 1:
             $this->_REDIS->connect($this->_HOST, $this->_PORT, $this->_TIMEOUT);
@@ -1001,8 +1003,11 @@ class Redisclient {
 
     //记录错误
     public function writeLog($msg) {
-        $info = date('Y/m/d H:i:s', time()) . ' ' . $msg . "\n";
-        file_put_contents(__DIR__ . "/../logs/redis.txt", $info, FILE_APPEND);
+       if($this->isLog){
+            $info = date('Y/m/d H:i:s', time()) . ' ' . $msg . "\n";
+            file_put_contents($this->logfile, $info, FILE_APPEND);
+        }
+        return true; 
     }
 
 }
