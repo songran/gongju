@@ -1,16 +1,16 @@
 <?php
 //include "./vendor/autoload.php";
-require __DIR__ . '/../..//src/db/Rdkafka.php';
+require __DIR__ . '/../..//src/db/kafka.php';
 
-use Gongju\Db\Rdkafka;
+use \Gongju\Db\kafka;
 $config = [
     'group'      => 'mygroup',
-    'brokerList' => "127.0.0.1:9092,", //39.105.50.68:9092
+    'brokerList' => "192.168.33.10:9092,", //39.105.50.68:9092
     'topic'      => 'hell123',
     'maxNum'     => 5,
 ];
 
-$kafkaMod = new Rdkafka($config);
+$kafkaMod = new kafka($config);
 $kafkaMod->isConnect(); //监测kafka 是否连接
 // print_r($kafkaMod);
 // exit;

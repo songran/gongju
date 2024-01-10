@@ -6,10 +6,10 @@ mysqli_report(MYSQLI_REPORT_OFF);
 class Mysqli {
 
     private $link_id = null;//MySQLi链接
-    private $dbname; //数据库名
-    private $debug ; //调试模式
-    private $isLog ; //是否写入日志
-    private $logfile;//日志目录
+    private $dbname;        //数据库名
+    private $debug ;        //调试模式 是否显示错误提示
+    private $isLog ;        //是否写入日志
+    private $logfile;       //日志目录
 
     /**
      * $config =[

@@ -1,6 +1,6 @@
 <?php
 namespace Gongju\Db;
-class Rdkafka {
+class kafka {
 
     public $kafkaConf;
     public $topicConf;
