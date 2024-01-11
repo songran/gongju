@@ -1,16 +1,16 @@
 <?php
 //include "./vendor/autoload.php";
-require __DIR__ . '/../..//src/db/kafka.php';
+require __DIR__ . '/../..//src/db/Kafka.php';
 
-use \Gongju\Db\kafka;
+use \Gongju\Db\Kafka;
 $config = [
     'group'      => 'mygroup',
-    'brokerList' => "192.168.33.10:9092,", //39.105.50.68:9092
+    'brokerList' => "192.168.33.10:9092,", // 192.168.33.10
     'topic'      => 'hell123',
     'maxNum'     => 5,
 ];
 
-$kafkaMod = new kafka($config);
+$kafkaMod = new Kafka($config);
 $kafkaMod->isConnect(); //监测kafka 是否连接
 // print_r($kafkaMod);
 // exit;
