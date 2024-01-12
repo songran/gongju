@@ -2,12 +2,12 @@
 namespace Gongju\Db;
 class Kafka{
 
-    public  $kafkaConf;
+    public  $config;
     public  $topicConf;
     public  $consumer;
 
     public function __construct($config){
-        $this->kafkaConf   = $config;
+        $this->config   = $config;
         $this->getConsumer();
     }
 
@@ -15,13 +15,15 @@ class Kafka{
     public function  getConsumer()
     {
         $conf = new \RdKafka\Conf();
-        $conf->set('group.id', $this->kafkaConf['group']);
-        $conf->set('metadata.broker.list', $this->kafkaConf['brokerList']);
+        $conf->set('group.id', $this->config['group']);
+        $conf->set('metadata.broker.list', $this->config['brokerList']);
+
         $topicConf = new \RdKafka\TopicConf();
         $topicConf->set('auto.offset.reset', 'smallest');
         $conf->setDefaultTopicConf($topicConf);
+
         $consumer = new \RdKafka\KafkaConsumer($conf);
-        $consumer->subscribe([$this->kafkaConf['topic']]);
+        $consumer->subscribe([$this->config['topic']]);
 
         $this->topicConf = $topicConf;
         $this->consumer = $consumer;
@@ -32,10 +34,11 @@ class Kafka{
     //查看kafka 是否连接正常 
     public function isConnect(){
         try{
-            $topic = $this->consumer->newTopic($this->kafkaConf['topic'],$this->topicConf);
+            $topic = $this->consumer->newTopic($this->config['topic'],$this->topicConf);
             $this->consumer->getMetadata(false, $topic, 1000) ;
         }catch(\Exception $e){   
             $info = date('Y/m/d H:i:s',time()).' '.$e->getMessage()."\n";
+            echo $info;exit;
             //file_put_contents(__DIR__."/../logs/kafka.txt",$info,FILE_APPEND );
         }
     }
@@ -45,8 +48,8 @@ class Kafka{
     {
         $rk = new \RdKafka\Producer();
         $rk->setLogLevel(LOG_DEBUG);
-        $rk->addBrokers($this->kafkaConf['brokerList']);
-        $topic = $rk->newTopic($this->kafkaConf['topic']); 
+        $rk->addBrokers($this->config['brokerList']);
+        $topic = $rk->newTopic($this->config['topic']); 
         $topic->produce(RD_KAFKA_PARTITION_UA, 0, $msg);
     }
        
