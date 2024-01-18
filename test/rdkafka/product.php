@@ -1,12 +1,12 @@
 <?php
-//include "./vendor/autoload.php";
+// // //include "./vendor/autoload.php";
 // require __DIR__ . '/../..//src/db/Kafka.php';
 
 // use \Gongju\Db\Kafka;
 // $config = [
-//     'group'      => 'mygroup',
-//     'brokerList' => "192.168.33.10:9092,", // 192.168.33.10
-//     'topic'      => 'hell123',
+//     'group'      => 'mytest',
+//     'brokerList' => "192.168.33.10:9092", // 192.168.33.10
+//     'topic'      => 'mytest',
 //     'maxNum'     => 5,
 // ];
 // $kafkaMod = new Kafka($config);
@@ -19,14 +19,32 @@
 // $kafkaMod->product(json_encode($arr));
 
 
-$rk = new RdKafka\Producer();
 
-$rk->setLogLevel(LOG_DEBUG);      // 设置日志级别
-$rk->addBrokers('192.168.33.10:9002'); // 添加经纪人，就是ip地址
+// function test1(){
 
-$topic = $rk->newTopic("hell123"); // 新建主题
+//     $conf = new RdKafka\Conf();
+//     $conf->set('metadata.broker.list', '192.168.33.10:9092'); 
+//     //$conf->set('enable.idempotence', 'true');
 
-// 第一个参数：是分区。RD_KAFKA_PARTITION_UA代表未分配，并让librdkafka选择分区
-// 第二个参数：是消息标志，必须为0
-// 第三个参数：消息，如果不为NULL，它将被传递给主题分区程序
-$topic->produce(RD_KAFKA_PARTITION_UA, 0, 'Message'); // 生成并发送单个消息
+//     $producer = new RdKafka\Producer($conf);
+
+//     $topic = $producer->newTopic("mytest");
+
+//     for ($i = 0; $i < 10; $i++) {
+//         $topic->produce(RD_KAFKA_PARTITION_UA, 0, "Message $i");
+//         $producer->poll(0);
+//     }
+
+//     for ($flushRetries = 0; $flushRetries < 10; $flushRetries++) {
+//         $result = $producer->flush(10000);
+//         if (RD_KAFKA_RESP_ERR_NO_ERROR === $result) {
+//             break;
+//         }
+//     }
+
+//     if (RD_KAFKA_RESP_ERR_NO_ERROR !== $result) {
+//         throw new \RuntimeException('Was unable to flush, messages might be lost!');
+//     }
+// }
+
+

@@ -5,7 +5,7 @@
 // use \Gongju\Db\Kafka;
 // $config = [
 //     'group'      => 'mygroup',
-//     'brokerList' => "192.168.33.10:9092,", // 192.168.33.10
+//     'brokerList' => "192.168.33.10", // 192.168.33.10
 //     'topic'      => 'hell123',
 //     'maxNum'     => 5,
 // ];
@@ -24,33 +24,58 @@
 //     $count++;
 // }
 
-$rk = new RdKafka\Consumer();
-$rk->setLogLevel(LOG_DEBUG); // 设置日志级别
-$rk->addBrokers("192.168.33.10:9002"); // 添加经纪人，就是ip地址
 
-$topic = $rk->newTopic("hell123"); // 这里的$rk和生产者是不同的类哦
+// function test1(){
+//     $conf = new RdKafka\Conf();
+//     // Set a rebalance callback to log partition assignments (optional)
+//     $conf->setRebalanceCb(function (RdKafka\KafkaConsumer $kafka, $err, array $partitions = null) {
+//         switch ($err) {
+//             case RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS:
+//                 echo "Assign: ";
+//                 var_dump($partitions);
+//                 $kafka->assign($partitions);
+//                 break;
 
-// 第一个参数分区ID
-// 第二个参数是开始消费的偏移量，有效值
-$topic->consumeStart(0, RD_KAFKA_OFFSET_BEGINNING);
+//              case RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS:
+//                  echo "Revoke: ";
+//                  var_dump($partitions);
+//                  $kafka->assign(NULL);
+//                  break;
 
-while (true) {
-    // 第一个参数是要消耗的分区
-    // 第二个参数是等待收到消息的最长时间，1000是一秒
-    $msg = $topic->consume(0, 1000);
-    if (@$msg->err) {
-        echo $msg->errstr(), "\n"; // 输出错误
-        //break;
-    } else {
-        echo @$msg->payload, "\n"; // 输出消息
-    }
-}
+//              default:
+//                 throw new \Exception($err);
+//         }
+//     });
 
+//     $conf->set('group.id', 'myConsumerGroup');
+//     $conf->set('metadata.broker.list', '192.168.33.10');
+//     $conf->set('auto.offset.reset', 'earliest');
+//     $conf->set('enable.partition.eof', 'true');
 
+//     $consumer = new RdKafka\KafkaConsumer($conf);
+//     $consumer->subscribe(['mytest']);
 
+//     echo "Waiting for partition assignment... (make take some time when\n";
+//     echo "quickly re-joining the group after leaving it.)\n";
 
-
-
+//     while (true) {
+//         $message = $consumer->consume(1000);
+//         switch ($message->err) {
+//             case RD_KAFKA_RESP_ERR_NO_ERROR:
+//                 var_dump($message);
+//                 break;
+//             case RD_KAFKA_RESP_ERR__PARTITION_EOF:
+//                 echo "No more messages; will wait for more\n";
+//                 break;
+//             case RD_KAFKA_RESP_ERR__TIMED_OUT:
+//                 echo "Timed out\n";
+//                 break;
+//             default:
+//                 throw new \Exception($message->errstr(), $message->err);
+//                 break;
+//         }
+//     }
+// }
 
 
 

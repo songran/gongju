@@ -47,7 +47,7 @@ class Kafka{
     public  function  product($msg)
     {
         $rk = new \RdKafka\Producer();
-        $rk->setLogLevel(LOG_DEBUG);
+        $rk->setLogLevel((string)LOG_DEBUG);
         $rk->addBrokers($this->config['brokerList']);
         $topic = $rk->newTopic($this->config['topic']); 
         $topic->produce(RD_KAFKA_PARTITION_UA, 0, $msg);
