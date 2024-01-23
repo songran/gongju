@@ -24,6 +24,20 @@ composer require songran/gongju dev-main
 
 
 4.阿里云 发送短信
+	阿里云短信接口
+
+	1.监测环境依赖
+	
+	2.发送短信
+	$params  =array(
+		'accessKeyId'		=>'xxx',
+		'accessKeySecret'	=>'xxx',
+		'SignName'			=>'xxx',
+	);
+	$SendSms = new SendSms($params); $res = $SendSms->domesticVcode(手机号,验证码); //发送国内验证码
+	echo '<pre>';
+	print_r($res);
+
 
 5.生成二维码图片 （验证码）扫码登录使用
 
