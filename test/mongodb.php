@@ -3,28 +3,26 @@
  *mongodb 操作方法
  */
 include "./vendor/autoload.php";
-$config = [
-    "log_master" => [
-        "host"     => "xxxx",
-        "port"     => 27017,
-        "username" => "root",
-        "password" => "root123",
-    ],
+$config = [    
+    "host"     => "192.168.33.10",
+    "port"     => 27017,
+    "username" => "root",
+    "password" => "123456",
 ];
-$mon = new Gongju\Db\Mongo($config['log_master']);
-
+$mon = new Gongju\Db\Mongo($config);
+ 
 //1  新增
-$insert = [
-    'ip'    => '192.168.0.11',
-    'code'  => 30001,
-    'info'  => 'wrong,wrong,wrong',
-    'level' => 'info',
-    'time'  => '20170712',
-];
-$res = $mon->insert('longzhu-log.api_log_201707', $insert);
+// $insert = [
+//     'ip'    => '192.168.0.11',
+//     'code'  => 30001,
+//     'info'  => 'wrong,wrong,wrong',
+//     'level' => 'info',
+//     'time'  => '20170712',
+// ];
+// $res = $mon->insert('longzhu-log.api_log_201707', $insert);
 
-print_r($res);
-exit;
+// print_r($res);
+// exit;
 //2 修改
 /*
 $options = array(
@@ -60,4 +58,5 @@ $filter = array(
 $res  = $mon->select('longzhu-log.api_log_201707',$filter,$options);
  */
 // $res  = $mon->select('longzhu-log.api_log_201707');
-// print_r($res);
+$res  = $mon->select('test.aa',[],[]);
+print_r($res);
